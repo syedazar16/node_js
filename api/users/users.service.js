@@ -67,4 +67,32 @@ module.exports = {
       );
     });
   },
+  deleteUser: (id) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `delete from users where id=?`,
+        [id],
+        (err, results, fields) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(results);
+        }
+      );
+    });
+  },
+  getUserByEmailId: (email) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `select * from users where email=?`,
+        [email],
+        (err, results, fields) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(results);
+        }
+      );
+    });
+  },
 };
