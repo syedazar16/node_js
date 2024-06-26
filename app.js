@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const userRouter = require("../node_js/api/users/users.router");
@@ -27,8 +28,8 @@ app.get("/api", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Port running on 3000");
+app.listen(process.env.APP_PORT || 3000, () => {
+  console.log("Port running on", process.env.APP_PORT);
 });
 
 // new set up
