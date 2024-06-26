@@ -3,6 +3,7 @@ const app = express();
 const userRouter = require("../node_js/api/users/users.router");
 const AppError = require("./utils/appError");
 
+app.use(express.json());
 app.use("/api/users", userRouter);
 
 app.all("*", (req, res, next) => {

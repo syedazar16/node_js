@@ -1,37 +1,70 @@
-const AppError = require("../../utils/appError");
-const { getAllUsers, getUserById } = require("../users/users.controller");
+const pool = require("../../config/database");
 
 module.exports = {
-  getAllUsers: async (req, res, next) => {
-    try {
-      const result = await getAllUsers();
-      if (!result.length) {
-        return res.status(200).json({
-          success: 1,
-          message: "Record Not Found",
-        });
-      }
-      return res.status(200).json({
-        success: 1,
-        message: result,
+  getAllUsers: () => {
+    return new Promise((resolve, reject) => {
+      pool.query(`select * from users`, [], (err, results, fields) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
       });
-    } catch (error) {
-      next(error);
-    }
+    });
   },
-  getUserById: async (req, res, next) => {
-    try {
-      const id = req.params.id;
-      const result = await getUserById(id);
-      if (!result.length) {
-        throw new AppError("Record not found", 404);
-      }
-      return res.status(200).json({
-        success: 1,
-        message: result,
-      });
-    } catch (error) {
-      next(error);
-    }
+  getUserById: (id) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `select * from users where id=?`,
+        [id],
+        (err, results, fields) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(results);
+        }
+      );
+    });
+  },
+  createUser: (data) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `insert into users(id, first_name, last_name, email, password, phone_no) values(?,?,?,?,?,?) `,
+        [
+          data.id,
+          data.first_name,
+          data.last_name,
+          data.email,
+          data.password,
+          data.phone_no,
+        ],
+        (err, results, fields) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(results);
+        }
+      );
+    });
+  },
+  updateUser: (data) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `update users set first_name=?, last_name=?, email=?, password=?, phone_no=? where id=? `,
+        [
+          data.first_name,
+          data.last_name,
+          data.email,
+          data.password,
+          data.phone_no,
+          data.id,
+        ],
+        (err, results, fields) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(results);
+        }
+      );
+    });
   },
 };
